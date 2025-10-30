@@ -1,4 +1,4 @@
-import jwt from "JsonwebToken";
+import jwt from "jsonwebToken";
 export const protect = (req,res,next)=>{
     const token =req.headers.authorization?.split(" ")[1]
     if(!token)
