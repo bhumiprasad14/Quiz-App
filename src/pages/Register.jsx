@@ -20,18 +20,31 @@ const Register = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px", border: "1px solid #ccc" }}>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        <input type="email" placeholder="Email" onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-        <input type="password" placeholder="Password" onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-        <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
-        <button type="submit">Register</button>
-      </form>
+    <div className="container">
+      <div className="card form-card">
+        <h2 style={{marginTop:0}}>Create an account</h2>
+        <form onSubmit={handleSubmit}>
+          <label>Name</label>
+          <input type="text" placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+
+          <label>Password</label>
+          <input type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+
+          <label>Role</label>
+          <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+
+          <div className="actions">
+            <button type="submit" className="btn primary">Register</button>
+            <button type="button" className="btn" onClick={() => navigate('/login')}>Have an account?</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -5,17 +5,24 @@ import { AuthContext } from "../context/AuthContext";
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   return (
-    <nav style={{ padding: "10px", background: "#eee", display: "flex", justifyContent: "space-between" }}>
-      <Link to="/">Home</Link>
+    <nav className="navbar">
+      <div style={{display:'flex',alignItems:'center',gap:12}}>
+        <Link to="/" className="brand">QuizApp</Link>
+        <div className="links">
+          <Link to="/">Home</Link>
+          <Link to="/">Quizzes</Link>
+        </div>
+      </div>
+
       {user ? (
-        <div>
-          <span>{user.name} ({user.role})</span>
-          <button onClick={logout}>Logout</button>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <span style={{color:'var(--muted)'}}>{user.name} ({user.role})</span>
+          <button className="btn ghost" onClick={logout}>Logout</button>
         </div>
       ) : (
-        <div>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <Link to="/login" className="btn">Login</Link>
+          <Link to="/register" className="btn primary">Register</Link>
         </div>
       )}
     </nav>
