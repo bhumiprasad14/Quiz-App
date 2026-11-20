@@ -30,7 +30,7 @@ const AttemptQuiz = () => {
         const res = await API.get(`/quiz/${quizId}`);
         setQuiz(res.data.quiz);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to load quiz details", error);
         setErrorMsg("Failed to load quiz details. Please return to the dashboard.");
       } finally {
         setLoading(false);
@@ -40,12 +40,13 @@ const AttemptQuiz = () => {
   }, [quizId]);
 
   const handleSelectOption = (questionId, option) => {
-    setAnswers({ ...answers, [questionId]: option });
+    setAnswers((prev) => ({ ...prev, [questionId]: option }));
   };
 
   const answeredCount = Object.keys(answers).length;
   const totalQuestions = quiz?.questions?.length || 0;
-  const progressPercentage = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
+  const progressPercentage =
+    totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,6 +64,7 @@ const AttemptQuiz = () => {
     }));
 
     setSubmitting(true);
+    setErrorMsg("");
     try {
       const res = await API.post("/responses/submit", {
         quizId,
@@ -71,15 +73,18 @@ const AttemptQuiz = () => {
         answers: answersArray,
       });
 
-      const responseId = res.data?.data?.response?.id || res.data?.data?.response?._id;
+      const responseId =
+        res.data?.data?.response?.id || res.data?.data?.response?._id;
       if (responseId) {
         navigate(`/student/results/${responseId}`);
       } else {
         navigate("/student");
       }
     } catch (error) {
-      console.error(error);
-      const msg = error.response?.data?.message || "Failed to submit quiz. Please try again.";
+      console.error("Failed to submit quiz", error);
+      const msg =
+        error.response?.data?.message ||
+        "Failed to submit quiz. Please try again.";
       setErrorMsg(msg);
       setSubmitting(false);
     }
@@ -89,9 +94,24 @@ const AttemptQuiz = () => {
     return (
       <div className="app-container">
         <Navbar />
-        <main className="main-content" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <main
+          className="main-content"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <div style={{ textAlign: "center", padding: "60px 0" }}>
-            <div style={{ fontSize: "18px", color: "var(--text-muted)", fontWeight: "600" }}>Preparing quiz...</div>
+            <div
+              style={{
+                fontSize: "18px",
+                color: "var(--text-muted)",
+                fontWeight: "600",
+              }}
+            >
+              Preparing quiz...
+            </div>
           </div>
         </main>
         <Footer />
@@ -104,10 +124,18 @@ const AttemptQuiz = () => {
       <div className="app-container">
         <Navbar />
         <main className="main-content">
-          <div className="container-narrow" style={{ paddingTop: "60px", textAlign: "center" }}>
+          <div
+            className="container-narrow"
+            style={{ paddingTop: "60px", textAlign: "center" }}
+          >
             <div className="card" style={{ padding: "40px" }}>
               <h2 style={{ marginBottom: "12px" }}>Quiz Not Found</h2>
-              <p style={{ color: "var(--text-secondary)", marginBottom: "24px" }}>
+              <p
+                style={{
+                  color: "var(--text-secondary)",
+                  marginBottom: "24px",
+                }}
+              >
                 The quiz you are looking for may have been removed or is unavailable.
               </p>
               <Link to="/student" className="btn btn-primary">
@@ -154,7 +182,7 @@ const AttemptQuiz = () => {
                 alignItems: "flex-start",
                 gap: "16px",
                 flexWrap: "wrap",
-                marginBottom: "16px",
+                marginBottom: "20px",
               }}
             >
               <div>
@@ -225,7 +253,7 @@ const AttemptQuiz = () => {
           </div>
 
           {errorMsg && (
-            <div className="alert alert-error">
+            <div className="alert alert-error" style={{ marginBottom: "24px" }}>
               <div>{errorMsg}</div>
             </div>
           )}
@@ -233,11 +261,11 @@ const AttemptQuiz = () => {
           <form onSubmit={handleSubmit}>
             {/* Questions List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "32px" }}>
-              {quiz.questions.map((q, qIndex) => {
+              {quiz.questions && quiz.questions.map((q, qIndex) => {
                 const selectedOption = answers[q._id];
 
                 return (
-                  <div key={q._id} className="card" style={{ padding: "28px" }}>
+                  <div key={q._id || qIndex} className="card" style={{ padding: "28px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
                       <span className="badge badge-neutral">Question {qIndex + 1}</span>
                       {selectedOption && (
@@ -260,7 +288,7 @@ const AttemptQuiz = () => {
                     </h2>
 
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {q.options.map((opt, oIndex) => {
+                      {q.options && q.options.map((opt, oIndex) => {
                         const isChosen = selectedOption === opt;
 
                         return (

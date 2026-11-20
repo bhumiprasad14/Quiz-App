@@ -1,3 +1,4 @@
+// import { useState, useEffect } from "react";
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import API from "../api/axios";
@@ -32,6 +33,7 @@ const TeacherDashboard = () => {
         const res = await API.get("/quiz");
         setQuizzes(res.data.quizzes || []);
       } catch (err) {
+        console.error(err);
         console.error("Failed to load quizzes", err);
         setErrorMsg("Failed to load your quizzes. Please try refreshing.");
       } finally {
@@ -59,8 +61,22 @@ const TeacherDashboard = () => {
   );
 
   return (
+
     <div className="app-container">
       <Navbar />
+      <div style={{ padding: "20px" }}>
+        <h2>Teacher Dashboard</h2>
+        <Link to="/create-quiz">Create Quiz</Link>
+        <ul>
+          {quizzes.map((quiz) => (
+            <li key={quiz._id}>
+              <h3>{quiz.title}</h3>
+              <p>{quiz.description}</p>
+              <Link to={`/quiz-responses/${quiz._id}`}>View Responses</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <main className="main-content">
         <div className="container" style={{ paddingTop: "36px" }}>
